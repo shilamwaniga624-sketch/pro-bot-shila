@@ -1,0 +1,65 @@
+// ======================================
+// PART 4 - EVEN & ODD ANALYSIS
+// ======================================
+
+function analyseEvenOdd() {
+
+    if (digitHistory.length < 50) {
+
+        alert("Collecting more market data...");
+        return;
+
+    }
+
+    let even = 0;
+    let odd = 0;
+
+    digitHistory.forEach(digit => {
+
+        if (digit % 2 === 0) {
+            even++;
+        } else {
+            odd++;
+        }
+
+    });
+
+    let signal = "";
+    let confidence = 0;
+
+    if (even > odd) {
+
+        signal = "ODD";
+        confidence = Math.round((even / digitHistory.length) * 100);
+
+    } else {
+
+        signal = "EVEN";
+        confidence = Math.round((odd / digitHistory.length) * 100);
+
+    }
+
+    if (confidence > 95) confidence = 95;
+    if (confidence < 5) confidence = 5;
+
+    prediction.innerHTML = signal;
+
+    confidenceBar.style.width = confidence + "%";
+    confidenceText.innerHTML = confidence + "%";
+
+    analysisTable.innerHTML = `
+    <tr>
+        <td>${volatility.value}</td>
+        <td>${signal}</td>
+        <td>${confidence}%</td>
+        <td>EVEN / ODD</td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            Even Digits: ${even} |
+            Odd Digits: ${odd}
+        </td>
+    </tr>
+    `;
+
+}
