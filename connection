@@ -1,0 +1,108 @@
+// ==========================
+// TraderShila Analysis Tool
+// Part 1 - Connection & Balance
+// ==========================
+
+const APP_ID = 1089;
+let ws = null;
+
+// HTML Elements
+const apiToken = document.getElementById("apiToken");
+const connectBtn = document.getElementById("connectBtn");
+const balance = document.getElementById("balance");
+
+// Connect Button
+connectBtn.addEventListener("click", connectDeriv);
+
+function connectDeriv() {
+
+    const token = apiToken.value.trim();
+
+    if (token === "") {
+        alert("Please enter your Deriv API Token.");
+        return;
+    }
+
+    connectBtn.disabled = true;
+    connectBtn.innerHTML = "Connecting...";
+
+    ws = new WebSocket(
+        `wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`
+    );
+
+    ws.onopen = function () {
+
+        ws.send(JSON.stringify({
+            authorize: token
+        }));
+
+    };
+
+    ws.onmessage = function (event) {
+
+        const data = JSON.parse(event.data);
+
+        console.log(data);
+
+        // Error
+        if (data.error) {
+
+            alert(data.error.message);
+
+            connectBtn.disabled = false;
+            connectBtn.innerHTML = "Connect";
+
+            return;
+        }
+
+        // Successful Login
+        if (data.msg_type === "authorize") {
+
+            connectBtn.innerHTML = "Connected";
+
+            balance.innerHTML =
+                data.authorize.balance + " " +
+                data.authorize.currency;
+
+            balance.style.color = "#00ff66";
+
+            // Subscribe to Balance Updates
+            ws.send(JSON.stringify({
+                balance: 1,
+                subscribe: 1
+            }));
+
+        }
+
+        // Live Balance Updates
+        if (data.msg_type === "balance") {
+
+            balance.innerHTML =
+                data.balance.balance + " " +
+                data.balance.currency;
+
+            balance.style.color = "#00ff66";
+
+        }
+
+    };
+
+    ws.onerror = function () {
+
+        alert("Unable to connect to Deriv.");
+
+        connectBtn.disabled = false;
+        connectBtn.innerHTML = "Connect";
+
+    };
+
+    ws.onclose = function () {
+
+        console.log("Disconnected.");
+
+        connectBtn.disabled = false;
+        connectBtn.innerHTML = "Connect";
+
+    };
+
+}
