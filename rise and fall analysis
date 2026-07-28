@@ -1,0 +1,74 @@
+// ======================================
+// PART 5 - RISE & FALL ANALYSIS
+// ======================================
+
+function analyseRiseFall() {
+
+    if (digitHistory.length < 50) {
+
+        alert("Collecting more market data...");
+        return;
+
+    }
+
+    let rise = 0;
+    let fall = 0;
+
+    // Compare each digit with the previous one
+    for (let i = 1; i < digitHistory.length; i++) {
+
+        if (digitHistory[i] > digitHistory[i - 1]) {
+
+            rise++;
+
+        } else if (digitHistory[i] < digitHistory[i - 1]) {
+
+            fall++;
+
+        }
+
+    }
+
+    let signal = "";
+    let confidence = 0;
+    let trend = "";
+
+    if (rise > fall) {
+
+        signal = "FALL";
+        trend = "Market has been rising";
+        confidence = Math.round((rise / (rise + fall)) * 100);
+
+    } else {
+
+        signal = "RISE";
+        trend = "Market has been falling";
+        confidence = Math.round((fall / (rise + fall)) * 100);
+
+    }
+
+    if (confidence > 95) confidence = 95;
+    if (confidence < 5) confidence = 5;
+
+    prediction.innerHTML = signal;
+
+    confidenceBar.style.width = confidence + "%";
+    confidenceText.innerHTML = confidence + "%";
+
+    analysisTable.innerHTML = `
+    <tr>
+        <td>${volatility.value}</td>
+        <td>${signal}</td>
+        <td>${confidence}%</td>
+        <td>${trend}</td>
+    </tr>
+
+    <tr>
+        <td colspan="4">
+            Rising Moves: ${rise} |
+            Falling Moves: ${fall}
+        </td>
+    </tr>
+    `;
+
+}
