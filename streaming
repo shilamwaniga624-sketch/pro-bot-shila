@@ -1,0 +1,127 @@
+// =====================================
+// PART 2 - Live Tick Streaming
+// =====================================
+
+const tickStream = document.getElementById("tickStream");
+const volatility = document.getElementById("volatility");
+
+// Keep the latest 100 digits
+let digitHistory = [];
+let tickSubscription = null;
+
+// Symbol mapping
+const symbolMap = {
+    "Volatility 10": "R_10",
+    "Volatility 20": "R_20",
+    "Volatility 25": "R_25",
+    "Volatility 50": "R_50",
+    "Volatility 75": "R_75",
+    "Volatility 100": "R_100",
+    "Volatility 10 (1s)": "1HZ10V",
+    "Volatility 50 (1s)": "1HZ50V",
+    "Volatility 75 (1s)": "1HZ75V",
+    "Volatility 100 (1s)": "1HZ100V"
+};
+
+// Start streaming after login
+function subscribeTicks() {
+
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    // Clear previous history
+    digitHistory = [];
+    tickStream.innerHTML = "";
+
+    const symbol = symbolMap[volatility.value];
+
+    ws.send(JSON.stringify({
+        ticks: symbol,
+        subscribe: 1
+    }));
+
+}
+
+// Change symbol
+volatility.addEventListener("change", () => {
+
+    if (ws && ws.readyState === WebSocket.OPEN) {
+
+        subscribeTicks();
+
+    }
+
+});
+
+// Receive live ticks
+const previousHandler = ws ? ws.onmessage : null;
+
+function handleTick(data) {
+
+    if (data.msg_type !== "tick") return;
+
+    const quote = data.tick.quote;
+
+    const digit = parseInt(
+        quote.toString().slice(-1)
+    );
+
+    digitHistory.push(digit);
+
+    if (digitHistory.length > 100) {
+
+        digitHistory.shift();
+
+    }
+
+    tickStream.innerHTML =
+        "<b>" + quote + "</b> → Digit: " + digit + "<br>" +
+        tickStream.innerHTML;
+
+    updateDigitBoxes();
+
+}
+
+// Merge with existing message handler
+function attachTickListener() {
+
+    const original = ws.onmessage;
+
+    ws.onmessage = function (event) {
+
+        const data = JSON.parse(event.data);
+
+        // Call original handler first
+        if (typeof original === "function") {
+            original(event);
+        }
+
+        // Tick processing
+        handleTick(data);
+
+    };
+
+}
+
+// Call after successful authorize
+// Add this line inside your authorize block:
+//
+// subscribeTicks();
+// attachTickListener();
+
+function updateDigitBoxes() {
+
+    const counts = new Array(10).fill(0);
+
+    digitHistory.forEach(d => counts[d]++);
+
+    document.querySelectorAll(".digit").forEach((box, index) => {
+
+        box.innerHTML =
+            index +
+            "<br><small>" +
+            counts[index] +
+            "</small>";
+
+    });
+
+}
