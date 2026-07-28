@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TraderShila Analysis Tool</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+
+<h1>TraderShila Analysis Tool</h1>
+
+<p>Professional Deriv Market Analysis</p>
+
+</header>
+
+<div class="connection-box">
+
+<h2>Connect Deriv Account</h2>
+
+<input
+type="password"
+id="apiToken"
+placeholder="Enter Deriv API Token">
+
+<button id="connectBtn">
+
+Connect
+
+</button>
+
+</div>
+
+<div class="account">
+
+<div class="card">
+
+<h3>Account Balance</h3>
+
+<h1 id="balance">$0.00</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Profit / Loss</h3>
+
+<h1 id="profitLoss">0.00</h1>
+
+</div>
+
+</div>
+
+<div class="analysis">
+
+<div class="left">
+
+<h2>Contract Type</h2>
+
+<select id="contractType">
+
+<option>Matches & Differs</option>
+
+<option>Even & Odd</option>
+
+<option>Rise & Fall</option>
+
+</select>
+
+<h2>Volatility Index</h2>
+
+<select id="volatility">
+
+<option>Volatility 10</option>
+
+<option>Volatility 20</option>
+
+<option>Volatility 25</option>
+
+<option>Volatility 50</option>
+
+<option>Volatility 75</option>
+
+<option>Volatility 100</option>
+
+<option>Volatility 10 (1s)</option>
+
+<option>Volatility 50 (1s)</option>
+
+<option>Volatility 75 (1s)</option>
+
+<option>Volatility 100 (1s)</option>
+
+</select>
+
+<button id="analyseBtn">
+
+Analyse Market
+
+</button>
+
+</div>
+
+<div class="right">
+
+<h2>Prediction Number</h2>
+
+<div class="prediction">
+
+<span id="prediction">-</span>
+
+</div>
+
+<h3>Confidence</h3>
+
+<div class="confidence">
+
+<div id="confidenceBar"></div>
+
+</div>
+
+<p id="confidenceText">
+
+0%
+
+</p>
+
+</div>
+
+</div>
+
+<section class="digits">
+
+<h2>Prediction Digits</h2>
+
+<div class="digit-grid">
+
+<div class="digit">0</div>
+
+<div class="digit">1</div>
+
+<div class="digit">2</div>
+
+<div class="digit">3</div>
+
+<div class="digit">4</div>
+
+<div class="digit">5</div>
+
+<div class="digit">6</div>
+
+<div class="digit">7</div>
+
+<div class="digit">8</div>
+
+<div class="digit">9</div>
+
+</div>
+
+</section>
+
+<section class="market">
+
+<h2>Market Analysis</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Volatility</th>
+
+<th>Prediction</th>
+
+<th>Confidence</th>
+
+<th>Trend</th>
+
+</tr>
+
+</thead>
+
+<tbody id="analysisTable">
+
+<tr>
+
+<td>-</td>
+
+<td>-</td>
+
+<td>-</td>
+
+<td>-</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+<section class="ticks">
+
+<h2>Live Tick Stream</h2>
+
+<div id="tickStream">
+
+Waiting for connection...
+
+</div>
+
+</section>
+
+<footer>
+
+TraderShila Analysis Tool © 2026
+
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@deriv/deriv-api/dist/DerivAPIBasic.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
