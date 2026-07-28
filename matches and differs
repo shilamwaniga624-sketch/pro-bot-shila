@@ -1,0 +1,138 @@
+// ======================================
+// PART 3 - Matches & Differs Analysis
+// ======================================
+
+const analyseBtn = document.getElementById("analyseBtn");
+const contractType = document.getElementById("contractType");
+const prediction = document.getElementById("prediction");
+const confidenceBar = document.getElementById("confidenceBar");
+const confidenceText = document.getElementById("confidenceText");
+const analysisTable = document.getElementById("analysisTable");
+
+analyseBtn.addEventListener("click", analyseMarket);
+
+function analyseMarket() {
+
+    if (digitHistory.length < 50) {
+
+        alert("Collecting more market data...");
+
+        return;
+
+    }
+
+    if (contractType.value === "Matches & Differs") {
+
+        analyseMatchesDiffers();
+
+    }
+
+}
+
+function analyseMatchesDiffers() {
+
+    let counts = new Array(10).fill(0);
+
+    digitHistory.forEach(d => {
+
+        counts[d]++;
+
+    });
+
+    // Least common digit
+    let leastDigit = 0;
+    let leastCount = counts[0];
+
+    // Most common digit
+    let mostDigit = 0;
+    let mostCount = counts[0];
+
+    for (let i = 1; i < 10; i++) {
+
+        if (counts[i] < leastCount) {
+
+            leastCount = counts[i];
+            leastDigit = i;
+
+        }
+
+        if (counts[i] > mostCount) {
+
+            mostCount = counts[i];
+            mostDigit = i;
+
+        }
+
+    }
+
+    // Estimate confidence
+    let confidence =
+        Math.round(
+            ((mostCount - leastCount) /
+            digitHistory.length) * 100
+        );
+
+    if (confidence < 5)
+        confidence = 5;
+
+    if (confidence > 95)
+        confidence = 95;
+
+    prediction.innerHTML = leastDigit;
+
+    confidenceBar.style.width =
+        confidence + "%";
+
+    confidenceText.innerHTML =
+        confidence + "%";
+
+    highlightPrediction(leastDigit);
+
+    analysisTable.innerHTML = `
+<tr>
+
+<td>${volatility.value}</td>
+
+<td>${leastDigit}</td>
+
+<td>${confidence}%</td>
+
+<td>DIFFERS</td>
+
+</tr>
+
+<tr>
+
+<td>${volatility.value}</td>
+
+<td>${mostDigit}</td>
+
+<td>${100-confidence}%</td>
+
+<td>MATCHES</td>
+
+</tr>
+`;
+
+}
+
+function highlightPrediction(number){
+
+    const boxes =
+        document.querySelectorAll(".digit");
+
+    boxes.forEach((box,index)=>{
+
+        box.style.background="#1d1d1d";
+        box.style.color="#ffffff";
+
+        if(index===number){
+
+            box.style.background="#00ff66";
+            box.style.color="#000000";
+
+        }
+
+    });
+
+}
