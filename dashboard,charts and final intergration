@@ -1,0 +1,154 @@
+// =======================================
+// PART 6 - DASHBOARD & FINAL INTEGRATION
+// =======================================
+
+// Create dashboard if it doesn't exist
+let dashboard = document.getElementById("dashboard");
+
+if (!dashboard) {
+
+    dashboard = document.createElement("div");
+    dashboard.id = "dashboard";
+    dashboard.style.marginTop = "20px";
+    dashboard.style.padding = "15px";
+    dashboard.style.background = "#111";
+    dashboard.style.border = "1px solid #00ff66";
+    dashboard.style.borderRadius = "10px";
+
+    dashboard.innerHTML = `
+        <h2 style="color:#00ff66">TraderShila Dashboard</h2>
+
+        <p>Total Ticks :
+        <span id="totalTicks">0</span></p>
+
+        <p>Most Frequent Digit :
+        <span id="mostDigit">-</span></p>
+
+        <p>Least Frequent Digit :
+        <span id="leastDigit">-</span></p>
+
+        <p>Current Signal :
+        <span id="currentSignal">Waiting...</span></p>
+
+        <p>Signal Strength :
+        <span id="signalStrength">0%</span></p>
+
+        <h3 style="margin-top:20px;color:#00ff66;">
+        Signal History
+        </h3>
+
+        <div id="signalHistory"
+        style="
+        max-height:180px;
+        overflow:auto;
+        background:#000;
+        padding:10px;
+        border-radius:8px;">
+        </div>
+    `;
+
+    document.querySelector(".container").appendChild(dashboard);
+
+}
+
+function updateDashboard(signal, confidence) {
+
+    document.getElementById("totalTicks").innerHTML =
+        digitHistory.length;
+
+    const count = new Array(10).fill(0);
+
+    digitHistory.forEach(d => count[d]++);
+
+    let most = 0;
+    let least = 0;
+
+    for (let i = 1; i < 10; i++) {
+
+        if (count[i] > count[most]) most = i;
+
+        if (count[i] < count[least]) least = i;
+
+    }
+
+    document.getElementById("mostDigit").innerHTML = most;
+    document.getElementById("leastDigit").innerHTML = least;
+
+    document.getElementById("currentSignal").innerHTML =
+        signal;
+
+    document.getElementById("signalStrength").innerHTML =
+        confidence + "%";
+
+    const history =
+        document.getElementById("signalHistory");
+
+    const time =
+        new Date().toLocaleTimeString();
+
+    history.innerHTML =
+        "<div style='padding:6px;border-bottom:1px solid #222'>" +
+        time +
+        " | " +
+        volatility.value +
+        " | " +
+        signal +
+        " | Confidence " +
+        confidence +
+        "%" +
+        "</div>" +
+        history.innerHTML;
+
+}
+
+const oldMatches = analyseMatchesDiffers;
+analyseMatchesDiffers = function () {
+
+    oldMatches();
+
+    updateDashboard(
+        "Matches & Differs",
+        parseInt(confidenceText.innerHTML)
+    );
+
+};
+
+const oldEvenOdd = analyseEvenOdd;
+analyseEvenOdd = function () {
+
+    oldEvenOdd();
+
+    updateDashboard(
+        "Even & Odd",
+        parseInt(confidenceText.innerHTML)
+    );
+
+};
+
+const oldRiseFall = analyseRiseFall;
+analyseRiseFall = function () {
+
+    oldRiseFall();
+
+    updateDashboard(
+        "Rise & Fall",
+        parseInt(confidenceText.innerHTML)
+    );
+
+};
+
+setInterval(function(){
+
+    if(digitHistory.length>0){
+
+        document.title =
+        "TraderShila | " +
+        volatility.value +
+        " | " +
+        digitHistory[digitHistory.length-1];
+
+    }
+
+},1000);
+
+console.log("TraderShila Analysis Tool Loaded");
